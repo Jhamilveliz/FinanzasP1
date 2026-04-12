@@ -6,7 +6,7 @@ import Image from 'next/image';
 export default function Asistente() {
     const [isOpen, setIsOpen] = useState(false);
     const [mensajeInput, setMensajeInput] = useState("");
-    const bottomRef = useRef<HTMLDivElement>(null); // 👈 referencia al final del chat
+    const bottomRef = useRef<HTMLDivElement>(null);
 
     const [history, setHistory] = useState<any[]>([
         {
@@ -16,7 +16,6 @@ export default function Asistente() {
         }
     ]);
 
-    // 👇 Auto-scroll cada vez que llega un mensaje nuevo
     useEffect(() => {
         bottomRef.current?.scrollIntoView({ behavior: "smooth" });
     }, [history]);
@@ -48,7 +47,7 @@ export default function Asistente() {
             setHistory(prev => [...prev, {
                 role: "assistant",
                 message: data.respuesta,
-                icon: <Sparkles className="text-yellow-500" size={20} /> // 👈 ícono cambiado
+                icon: <Sparkles className="text-yellow-500" size={20} />
             }]);
 
         } catch (error) {
@@ -61,29 +60,33 @@ export default function Asistente() {
     };
 
     return (
-        <div className="fixed bottom-6 right-6 z-50">
-            {/* BOTÓN FLOTANTE — más grande */}
+        <div className="fixed bottom-4 sm:bottom-6 right-4 sm:right-6 z-50">
+            {/* BOTÓN FLOTANTE - Responsivo */}
             <button
                 onClick={() => setIsOpen(!isOpen)}
-                className={`rounded-xl shadow-2xl flex items-center justify-center transition-all transform hover:-translate-y-1 border border-slate-200 ${isOpen ? 'scale-0 opacity-0' : 'scale-100 opacity-100 hover:scale-110'}`}
+                className={`rounded-lg sm:rounded-xl shadow-2xl flex items-center justify-center transition-all transform hover:-translate-y-1 border border-slate-200 ${isOpen ? 'scale-0 opacity-0' : 'scale-100 opacity-100 hover:scale-110'}`}
             >
                 <Image
                     src="/pan.jpg"
                     alt="Logotipo de Panadería Asistente"
-                    width={80}
-                    height={80}
-                    className="rounded-xl"
+                    width={64}
+                    height={64}
+                    className="rounded-lg sm:rounded-xl w-16 h-16 sm:w-20 sm:h-20"
                 />
             </button>
 
-            {/* VENTANA DE CHAT — más grande */}
+            {/* VENTANA DE CHAT - Completamente responsiva */}
             <div
-                className={`fixed bottom-6 right-6 bg-white w-[380px] sm:w-[440px] rounded-2xl shadow-2xl border border-slate-200 flex flex-col overflow-hidden origin-bottom-right transition-all duration-300 ease-out
+                className={`fixed inset-0 sm:inset-auto bg-white rounded-t-3xl sm:rounded-2xl shadow-2xl border-t sm:border border-slate-200 flex flex-col overflow-hidden origin-bottom-right transition-all duration-300 ease-out sm:w-[380px] sm:h-[700px] sm:bottom-6 sm:right-6
                 ${isOpen ? 'scale-100 opacity-100 translate-y-0 pointer-events-auto' : 'scale-90 opacity-0 translate-y-10 pointer-events-none'}`}
-                style={{ maxHeight: '88vh', height: '700px' }}
+                style={{
+                    maxHeight: 'calc(100vh - 2rem)',
+                    height: '100vh',
+                    width: '100vw',
+                }}
             >
                 {/* Header */}
-                <div className="bg-slate-900 text-white p-4 flex justify-between items-center shrink-0">
+                <div className="bg-slate-900 text-white p-3 sm:p-4 flex justify-between items-center shrink-0">
                     <div className="flex items-center gap-2">
                         <div className="bg-white rounded-lg border border-slate-300 flex items-center justify-center overflow-hidden">
                             <Image
@@ -94,41 +97,41 @@ export default function Asistente() {
                                 className="rounded-lg"
                             />
                         </div>
-                        <div>
-                            <h3 className="font-bold text-sm">Bradley - CFO Urubo Bakery</h3>
+                        <div className="min-w-0">
+                            <h3 className="font-bold text-sm line-clamp-1">Bradley - CFO Urubo Bakery</h3>
                             <p className="text-xs text-green-400 flex items-center gap-1">
-                                <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-                                En línea
+                                <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse flex-shrink-0"></span>
+                                <span className="hidden sm:inline">En línea</span>
+                                <span className="sm:hidden">Online</span>
                             </p>
                         </div>
                     </div>
-                    <button onClick={() => setIsOpen(false)} className="text-slate-400 hover:text-white transition-colors">
+                    <button onClick={() => setIsOpen(false)} className="text-slate-400 hover:text-white transition-colors flex-shrink-0">
                         <X size={20} />
                     </button>
                 </div>
 
                 {/* Body (Mensajes) */}
-                <div className="p-4 overflow-y-auto bg-slate-50 flex flex-col gap-4 flex-1">
+                <div className="p-3 sm:p-4 overflow-y-auto bg-slate-50 flex flex-col gap-3 sm:gap-4 flex-1">
                     {history.map((item, index) => (
-                        <div key={index} className={`flex items-start gap-3 ${item.role === 'user' ? 'justify-end' : ''}`}>
+                        <div key={index} className={`flex items-start gap-2 sm:gap-3 ${item.role === 'user' ? 'justify-end' : ''}`}>
                             {item.role === 'assistant' && item.icon && (
-                                <div className="p-2 bg-yellow-50 border border-yellow-200 rounded-lg shrink-0 mt-1">
+                                <div className="p-2 bg-yellow-50 border border-yellow-200 rounded-lg shrink-0 mt-1 hidden sm:flex">
                                     {item.icon}
                                 </div>
                             )}
-                            <div className={`rounded-2xl text-sm p-3 max-w-[85%] shadow-sm ${item.role === 'assistant' ? 'bg-white border border-slate-200 text-slate-700 rounded-tl-sm whitespace-pre-wrap' : 'bg-indigo-600 text-white rounded-tr-sm'}`}>
+                            <div className={`rounded-2xl text-xs sm:text-sm p-2.5 sm:p-3 max-w-xs sm:max-w-sm shadow-sm ${item.role === 'assistant' ? 'bg-white border border-slate-200 text-slate-700 rounded-tl-sm whitespace-pre-wrap' : 'bg-indigo-600 text-white rounded-tr-sm break-words'}`}>
                                 {item.message}
                             </div>
                         </div>
                     ))}
-                    {/* 👇 Ancla invisible para el auto-scroll */}
                     <div ref={bottomRef} />
                 </div>
 
-                {/* Data Analysis Section */}
-                <div className="p-4 border-t border-slate-100 bg-white shrink-0">
-                    <h4 className="font-bold text-slate-800 text-sm mb-3">Análisis en Tiempo Real</h4>
-                    <div className="bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs text-slate-600 flex flex-col gap-2">
+                {/* Data Analysis Section - Responsive */}
+                <div className="p-3 sm:p-4 border-t border-slate-100 bg-white shrink-0">
+                    <h4 className="font-bold text-slate-800 text-xs sm:text-sm mb-2 sm:mb-3">Análisis en Tiempo Real</h4>
+                    <div className="bg-slate-50 border border-slate-200 rounded-lg sm:rounded-xl p-2 sm:p-3 text-xs text-slate-600 flex flex-col gap-1.5 sm:gap-2">
                         <div className="flex justify-between">
                             <span>Inversión Inicial:</span>
                             <span className="font-semibold text-red-500 border-b border-red-500 border-dashed cursor-help" title="¡Debería ser negativo!">Bs. 80,000</span>
@@ -137,7 +140,7 @@ export default function Asistente() {
                             <span>Tasa de Descuento:</span>
                             <span className="font-semibold text-slate-800">18%</span>
                         </div>
-                        <div className="flex justify-between border-t border-slate-100 pt-2">
+                        <div className="flex justify-between border-t border-slate-100 pt-1.5 sm:pt-2">
                             <span>VAN calculado:</span>
                             <span className="font-semibold text-slate-400">Bs. 0,00</span>
                         </div>
@@ -145,21 +148,20 @@ export default function Asistente() {
                 </div>
 
                 {/* Footer (Input) */}
-                <form onSubmit={enviarMensaje} className="p-3 bg-white border-t border-slate-100 flex gap-2 items-center shrink-0">
+                <form onSubmit={enviarMensaje} className="p-2 sm:p-3 bg-white border-t border-slate-100 flex gap-2 items-center shrink-0">
                     <input
                         type="text"
                         value={mensajeInput}
                         onChange={(e) => setMensajeInput(e.target.value)}
-                        placeholder="Escribe 'situacion 2'..."
-                        className="w-full border border-slate-200 text-sm rounded-xl px-4 py-2.5 bg-slate-50 outline-none focus:ring-2 focus:ring-indigo-500 transition text-slate-800 placeholder:text-slate-400"
-                    //className="w-full border border-slate-800 text-sm rounded-xl px-4 py-2.5 bg-slate-50 outline-none focus:ring-2 focus:ring-indigo-500 transition"
+                        placeholder="Escribe aquí..."
+                        className="w-full border border-slate-200 text-xs sm:text-sm rounded-lg sm:rounded-xl px-3 sm:px-4 py-2 sm:py-2.5 bg-slate-50 outline-none focus:ring-2 focus:ring-indigo-500 transition text-slate-800 placeholder:text-slate-400"
                     />
                     <button
                         type="submit"
                         disabled={!mensajeInput.trim()}
-                        className="p-2.5 bg-indigo-600 hover:bg-indigo-700 border border-slate-800 disabled:bg-slate-300 text-white rounded-xl transition flex items-center justify-center"
+                        className="p-2 sm:p-2.5 bg-indigo-600 hover:bg-indigo-700 disabled:bg-slate-300 text-white rounded-lg sm:rounded-xl transition flex items-center justify-center flex-shrink-0"
                     >
-                        <Send size={18} />
+                        <Send size={16} className="sm:size-[18px]" />
                     </button>
                 </form>
             </div>
