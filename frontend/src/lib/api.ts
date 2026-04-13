@@ -1,4 +1,3 @@
-
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://finanzasp1.onrender.com'
 
 export async function calcularRunway(datos: {
@@ -7,18 +6,12 @@ export async function calcularRunway(datos: {
     ingresos_base: number;
     porcentaje_ventas: number;
 }) {
-    const respuesta = await fetch(`${API_URL}/runway`, {
+    const respuesta = await fetch(`${API_URL}/api/runway`, {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(datos),
     });
-
-    if (!respuesta.ok) {
-        throw new Error('Error al conectar con el cerebro matemático de Python');
-    }
-
+    if (!respuesta.ok) throw new Error('Error al conectar con el cerebro matemático de Python');
     return respuesta.json();
 }
 
@@ -29,18 +22,12 @@ export async function calcularVan(datos: {
     flujo_3: number;
     tasa_descuento: number;
 }) {
-    const respuesta = await fetch(`${API_URL}/van`, {
+    const respuesta = await fetch(`${API_URL}/api/van`, {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(datos),
     });
-
-    if (!respuesta.ok) {
-        throw new Error('Error al calcular el VAN');
-    }
-
+    if (!respuesta.ok) throw new Error('Error al calcular el VAN');
     return respuesta.json();
 }
 
@@ -50,18 +37,12 @@ export async function calcularDilucion(datos: {
     cap_valoracion: number;
     descuento: number;
 }) {
-    const respuesta = await fetch(`${API_URL}/dilucion`, {
+    const respuesta = await fetch(`${API_URL}/api/dilucion`, {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(datos),
     });
-
-    if (!respuesta.ok) {
-        throw new Error('Error al calcular la dilución');
-    }
-
+    if (!respuesta.ok) throw new Error('Error al calcular la dilución');
     return respuesta.json();
 }
 
@@ -71,17 +52,11 @@ export async function calcularPrestamos(datos: {
     tasa_simple_anual: number;
     tasa_compuesta_anual: number;
 }) {
-    const respuesta = await fetch(`${API_URL}/prestamos`, {
+    const respuesta = await fetch(`${API_URL}/api/prestamos`, {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(datos),
     });
-
-    if (!respuesta.ok) {
-        throw new Error('Error al calcular las ofertas de préstamo');
-    }
-
+    if (!respuesta.ok) throw new Error('Error al calcular las ofertas de préstamo');
     return respuesta.json();
 }
