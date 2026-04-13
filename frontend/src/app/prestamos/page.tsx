@@ -299,7 +299,7 @@ export default function PrestamosPage() {
                         >
                             Crecimiento de la deuda en el tiempo
                         </p>
-                        <div className="flex-1 min-h-0">
+                        <div className="w-full h-[300px] md:h-[400px] min-h-[300px]">
                             <ResponsiveContainer width="100%" height="100%">
                                 <LineChart
                                     data={datosGrafico}

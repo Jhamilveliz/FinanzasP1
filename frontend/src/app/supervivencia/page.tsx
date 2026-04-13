@@ -207,7 +207,7 @@ export default function SupervivenciaPage() {
                         </p>
                     </div>
 
-                    <div className="flex-1 w-full min-h-0 pt-4">
+                    <div className="w-full h-[300px] md:h-[400px] min-h-[300px]">
                         <ResponsiveContainer width="100%" height="100%">
                             <BarChart data={datosGrafico} margin={{ top: 5, right: 10, left: -10, bottom: 0 }}>
                                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
