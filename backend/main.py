@@ -10,8 +10,8 @@ app = FastAPI(title="Simulador Financiero API")
 # Configuración CORS para permitir que Next.js hable con FastAPI
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000","https://finanzas-p1.vercel.app"], # El puerto por defecto de Next.js
-    allow_credentials=True,
+    allow_origins=["*"],
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
