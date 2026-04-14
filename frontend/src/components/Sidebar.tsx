@@ -10,7 +10,7 @@ export default function Sidebar() {
     const menuItems = [
         { href: '/', label: 'Resumen', icon: Home },
         { href: '/supervivencia', label: '1. Supervivencia', icon: Timer },
-        { href: '/inversiones', label: '2. Inversiones (VAN)', icon: LineChart },
+        { href: '/inversiones', label: '2. Inversiones', icon: LineChart },
         { href: '/capital', label: '3. Dilución', icon: PieChart },
         { href: '/prestamos', label: '4. Préstamos', icon: Landmark },
     ];
