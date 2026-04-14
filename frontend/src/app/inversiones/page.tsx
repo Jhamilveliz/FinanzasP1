@@ -5,11 +5,31 @@ import { calcularVan } from "@/lib/api";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, ReferenceLine } from 'recharts';
 import { TrendingUp } from 'lucide-react';
 
+// Función Matemática para calcular la TIR en el Frontend
+const calcularTIRLocal = (flujos: number[]): number => {
+    let minRate = -0.99; // -99%
+    let maxRate = 10.0;  // 1000%
+    let guess = 0;
+
+    // Método iterativo de bisección
+    for (let iteration = 0; iteration < 100; iteration++) {
+        guess = (minRate + maxRate) / 2;
+        let npv = 0;
+        for (let i = 0; i < flujos.length; i++) {
+            npv += flujos[i] / Math.pow(1 + guess, i);
+        }
+        if (Math.abs(npv) < 0.001) break;
+        if (npv > 0) minRate = guess;
+        else maxRate = guess;
+    }
+    return guess * 100; // Retorna en porcentaje
+};
+
 export default function InversionesPage() {
-    const [inversionInicial, setInversionInicial] = useState<number>(-80000);
-    const [flujo1, setFlujo1] = useState<number>(25000);
-    const [flujo2, setFlujo2] = useState<number>(35000);
-    const [flujo3, setFlujo3] = useState<number>(45000);
+    const [inversionInicial, setInversionInicial] = useState<number>(-50000);
+    const [flujo1, setFlujo1] = useState<number>(20000);
+    const [flujo2, setFlujo2] = useState<number>(25000);
+    const [flujo3, setFlujo3] = useState<number>(30000);
     const [tasaDescuento, setTasaDescuento] = useState<number>(15);
 
     const [resultado, setResultado] = useState<{
@@ -45,12 +65,11 @@ export default function InversionesPage() {
         { año: 'Año 3', flujo: flujo3 },
     ];
 
-    // Validación y formatteo seguro de números
-    const formatearMoneda = (valor: number | string): string => {
-        const num = typeof valor === "string" ? parseFloat(valor) : valor;
-        if (isNaN(num) || num === undefined) return "Bs. 0";
-        return `Bs. ${Math.round(num).toLocaleString("es-BO")}`;
-    };
+    // Cálculos de la TIR
+    const flujosArray = [inversionInicial, flujo1, flujo2, flujo3];
+    const tirCalculada = calcularTIRLocal(flujosArray);
+    const tirFormateada = isNaN(tirCalculada) ? "0.00" : tirCalculada.toFixed(2);
+    const tirSuperaBanco = tirCalculada >= tasaDescuento;
 
     const vanFormateado = isNaN(resultado.van) ? "0.00" : resultado.van.toFixed(2);
     const esPositivo = resultado.van >= 0;
@@ -74,7 +93,7 @@ export default function InversionesPage() {
                         <h1 className="text-xl font-medium text-white">Inversión: Horno Industrial y Delivery</h1>
                     </div>
                     <p className="hidden lg:block text-sm text-right max-w-sm" style={{ color: '#8fa3b8' }}>
-                        Evaluación del proyecto (VAN). ¿Vale la pena endeudar a Urubo Bakery para comprar un nuevo horno rotativo y una moto de delivery?
+                        Evaluación del proyecto (VAN y TIR). ¿Vale la pena endeudar a Urubo Bakery para comprar un nuevo horno rotativo y una moto de delivery?
                     </p>
                 </div>
             </div>
@@ -121,7 +140,7 @@ export default function InversionesPage() {
                         <div>
                             <div className="flex justify-between items-center mb-3">
                                 <label className="text-sm font-medium" style={{ color: '#64748b' }}>
-                                    Retorno Exigido por los Socios (%)
+                                    Retorno Exigido por el Banco (%)
                                 </label>
                                 <span
                                     className="text-xs font-medium px-2.5 py-1 rounded-full"
@@ -147,11 +166,11 @@ export default function InversionesPage() {
                 {/* Panel derecho: Resultado + Gráfico */}
                 <div className="lg:col-span-2 flex flex-col gap-5 min-h-0">
 
-                    {/* VAN + Criterio */}
-                    <div className="grid grid-cols-2 gap-5 flex-shrink-0">
-                        {/* VAN */}
+                    {/* TARJETAS SUPERIORES: VAN, TIR y Criterio */}
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-5 flex-shrink-0">
+                        {/* 1. Tarjeta VAN */}
                         <div
-                            className="rounded-2xl p-5 flex flex-col justify-between"
+                            className="rounded-2xl p-5 flex flex-col justify-center"
                             style={{ background: '#fff', border: '0.5px solid #e2e8f0' }}
                         >
                             <p className="text-sm mb-2" style={{ color: '#64748b' }}>Valor Actual Neto (VAN)</p>
@@ -163,7 +182,27 @@ export default function InversionesPage() {
                             </p>
                         </div>
 
-                        {/* Criterio */}
+                        {/* 2. Tarjeta TIR (¡NUEVA!) */}
+                        <div
+                            className="rounded-2xl p-5 flex flex-col justify-center relative overflow-hidden"
+                            style={{ background: '#fff', border: '0.5px solid #e2e8f0' }}
+                        >
+                            <p className="text-sm mb-2" style={{ color: '#64748b' }}>Tasa Interna de Retorno (TIR)</p>
+                            <p
+                                className="text-2xl font-medium flex items-center gap-2"
+                                style={{ color: tirSuperaBanco ? '#3b6d11' : '#a32d2d' }}
+                            >
+                                {tirFormateada}%
+                                <span className="text-sm font-normal px-2 py-0.5 rounded-md" style={{ background: tirSuperaBanco ? '#eaf3de' : '#fcebeb' }}>
+                                    {tirSuperaBanco ? '> ' + tasaDescuento + '%' : '< ' + tasaDescuento + '%'}
+                                </span>
+                            </p>
+                            <p className="text-xs mt-1" style={{ color: '#94a3b8' }}>
+                                Si la TIR supera al banco, aprueba.
+                            </p>
+                        </div>
+
+                        {/* 3. Tarjeta Criterio */}
                         <div
                             className="rounded-2xl p-5 flex items-center"
                             style={{
@@ -175,7 +214,7 @@ export default function InversionesPage() {
                                 className="text-sm font-medium leading-relaxed"
                                 style={{ color: esPositivo ? '#3b6d11' : '#a32d2d' }}
                             >
-                                {resultado.mensaje_criterio || (esPositivo ? '✅ Proyecto viable' : '❌ Proyecto no viable')}
+                                {resultado.mensaje_criterio || (esPositivo ? '✅ Proyecto viable. El VAN es positivo y la TIR supera el costo de la deuda.' : '❌ Proyecto no viable. Destruye valor.')}
                             </p>
                         </div>
                     </div>

@@ -1,4 +1,4 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://finanzasp1.onrender.com'
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://finanzasp1.onrender.com' || 'http://localhost:8000'
 
 export async function calcularRunway(datos: {
     caja_inicial: number;
